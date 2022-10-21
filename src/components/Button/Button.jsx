@@ -1,8 +1,10 @@
-const Button = ({ onClick }) => {
+import {ButtonMore} from './Button.styled'
+
+const Button = ({ loadMore }) => {
   return (
-    <Button type="button" onClick={() => onClick()}>
+    <ButtonMore type="button" onClick={loadMore}>
       Load more
-    </Button>
+    </ButtonMore>
   );
 };
 

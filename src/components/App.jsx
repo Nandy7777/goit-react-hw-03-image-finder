@@ -3,8 +3,8 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Searchbar from './Searchbar';
 import ImageGallery from './ImageGallery';
-import ErrorViewImg from './ErrorView';
-// import ImageAPI from '../services/image-api';
+import ErrorViewImg from './ErrorView/ErrorView';
+import ImageAPI from '../services/image-api';
 import Button from './Button';
 import {Loader} from './Loader/Loader';
 
@@ -26,25 +26,16 @@ export default class App extends Component {
     const nextPage = this.state.page;
 
     if (prevName !== nextName) {
-      this.setState({ loading: true });
-      // this.setState({ status: 'pending', page: 1, images: [] });
+      this.setState({ status: 'pending', page: 1, images: [] });
+      this.fetchImages(nextName, nextPage);
     }
     if (prevPage !== nextPage) {
       this.fetchImages(nextName, nextPage);
     }
+  }
 
-    fetch(
-    `https://pixabay.com/api/?q=${this.imageName}&page=1&key=29802518-7a19817c952422887bb4d93d8&image_type=photo&orientation=horizontal&per_page=12&page=${this.page}`
-  )
-    .then(response => {
-      if (response.ok) {
-        return response.json();
-      }
-      if (response.totalHits === 0) {
-        return Promise.reject(new Error());
-      }
-    })
-
+  fetchImages(nextName, nextPage) {
+    ImageAPI.fetchImages(nextName, nextPage)
       .then(data => {
         if (data.total === 0) {
           return this.setState({
@@ -65,35 +56,24 @@ export default class App extends Component {
       .catch(error => this.setState({ error, status: 'rejected' }));
   }
 
-  handleSearchbarSubmit = imageName => {
-    this.setState({ imageName, images: [], page: 1 });
+  handleSearchbarSubmit = name => {
+    this.fetchImages(name, this.state.page);
   };
 
-  loadMore() {
-    this.setState(prevState => ({
-      page: prevState.page + 1,
-    }));
-  }
-
+  loadMore = () => {
+    this.setState(state => ({ page: state.page + 1 }));
+  };
+  
   render() {
     return (
       <div>
         <Searchbar onSubmit={this.handleSearchbarSubmit} />
         {this.state.status === 'idle' && <p>Enter your search request</p>}
-        {/* {this.state.loading && <Loader />} */}
-        {this.state.status === 'pending' && <Loader />}
-        {this.state.status === 'rejected' && (
-          <ErrorViewImg message={this.message} />
-        )}
-        {this.state.status === 'resolved' && (
-          <>
-            <ImageGallery images={this.state.images} />
-            <Button onClick={this.loadMore} />
-          </>
-        )}
+        <ImageGallery images={this.state.images} />
+        {this.state.status === 'pending' && (<Loader />)}
+        {this.state.status === 'rejected' && <ErrorViewImg />}
+        {this.state.status === 'resolved' && (<Button loadMore={this.loadMore} />)}
         <ToastContainer autoClose={3000} theme="colored" />
-        {/* {this.state.images.length !== 0 && <Button loadMore={this.loadMore} />}
-        <ToastContainer autoClose={3000} theme="colored" /> */}
       </div>
     );
   }

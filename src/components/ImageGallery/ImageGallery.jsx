@@ -1,19 +1,17 @@
 import React from 'react';
 import { Gallery } from './ImageGallery.styled';
-import ImageGalleryItem from 'components/ImageGalleryItem';
+import ImageGalleryItem from '../ImageGalleryItem/ImageGalleryItem';
 
-export default function ImageGallery({ results }) {
+export default function ImageGallery({ images }) {
   return (
-    <>
       <Gallery>
-        {results.map(result => (
+        {images.map(image => (
           <ImageGalleryItem
-            key={result.id}
-            webformatURL={result.webformatURL}
-            tegs={result.tags}
+            key={image.id}
+            webformatURL={image.webformatURL}
+            tegs={image.tags}
           />
         ))}
       </Gallery>
-    </>
   );
 }
