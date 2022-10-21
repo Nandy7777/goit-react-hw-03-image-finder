@@ -20,14 +20,16 @@ export default class Searchbar extends Component {
   };
 
   handleSubmit = event => {
+    const { imageName } = this.state;
+
     event.preventDefault();
 
-    if (this.state.imageName.trim() === '') {
+    if (imageName.trim() === '') {
       toast.error('Please type something!');
       return;
     }
 
-    this.props.onSubmit(this.state.imageName);
+    this.props.onSubmit(imageName);
     this.setState({ imageName: '' });
   };
 
