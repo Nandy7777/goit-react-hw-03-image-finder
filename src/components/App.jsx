@@ -27,13 +27,13 @@ export default class App extends Component {
     const prevPage = prevState.page;
     const nextPage = this.state.page;
 
-    if (prevName !== nextName) {
-      this.setState({ status: 'pending', loading: true, page: 1, images: [] });
+    if (prevName !== nextName || prevPage !== nextPage) {
+      // this.setState({ status: 'pending', loading: true, page: 1, images: [] });
       this.fetchImages(nextName, nextPage);
     }
-    if (prevPage !== nextPage) {
-      this.fetchImages(nextName, nextPage);
-    }
+    // if (prevPage !== nextPage) {
+    //   this.fetchImages(nextName, nextPage);
+    // }
   }
 
   fetchImages(nextName, nextPage) {
@@ -58,8 +58,9 @@ export default class App extends Component {
       .catch(error => this.setState({ error, status: 'rejected' }));
   }
 
+//  тут поміняти треба
   handleSearchbarSubmit = name => {
-    this.fetchImages(name, this.state.page);
+    this.setState({ imageName: name, page: 1, images: [] });
   };
 
   loadMore = () => {
