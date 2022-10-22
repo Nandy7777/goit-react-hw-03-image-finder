@@ -39,7 +39,6 @@ export default class App extends Component {
           return this.setState({
             status: 'rejected',
             images: [],
-            loading: false,
           });
         }
         this.setState(prevState => {
