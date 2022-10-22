@@ -4,16 +4,16 @@ import { GalleryItem, GalleryItemImage } from './ImageGalleryItem.styled';
 export default function ImageGalleryItem({
   id,
   webformatURL,
-  // largeImageURL,
-  // onClick,
+  largeImageURL,
+  openModal,
   tags,
 }) {
   return (
-    <GalleryItem key={id}>
+    <GalleryItem key={id} onClick={openModal}>
       <GalleryItemImage
         src={webformatURL}
         alt={tags}
-        // onClick={() => onClick(largeImageURL, tags)}
+        data-large={largeImageURL}
       />
     </GalleryItem>
   );

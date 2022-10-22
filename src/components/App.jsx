@@ -6,7 +6,8 @@ import ImageGallery from './ImageGallery';
 import ErrorViewImg from './ErrorView/ErrorView';
 import ImageAPI from '../services/image-api';
 import Button from './Button';
-import {Loader} from './Loader/Loader';
+import { Loader } from './Loader/Loader';
+import Modal from './Modal'
 
 export default class App extends Component {
   state = {
@@ -17,6 +18,7 @@ export default class App extends Component {
     tags: null,
     page: 1,
     loading: false,
+    showModal: false,
   };
 
   componentDidUpdate(prevProps, prevState) {
@@ -33,7 +35,7 @@ export default class App extends Component {
       this.fetchImages(nextName, nextPage);
     }
   }
-  
+
   fetchImages(nextName, nextPage) {
     ImageAPI.fetchImages(nextName, nextPage)
       .then(data => {
@@ -64,16 +66,41 @@ export default class App extends Component {
     this.setState(state => ({ page: state.page + 1 }));
   };
 
+  toggleModal = () => {
+    this.setState(({ showModal }) => ({ showModal: !showModal }));
+  };
+
+  openModal = e => {
+    const largeImageURL = e.target.dataset.large;
+    const tags = e.target.alt;
+
+    if (e.target.nodeName === 'IMG') {
+
+      this.setState(({ showModal }) => ({
+        showModal: !showModal,
+        largeImageURL: largeImageURL,
+        tags: tags,
+      }));
+    }
+  };
+
   render() {
     return (
       <div>
         <Searchbar onSubmit={this.handleSearchbarSubmit} />
         {this.state.status === 'idle' && <p>Enter your search request</p>}
-        <ImageGallery images={this.state.images} />
+        <ImageGallery images={this.state.images} openModal={this.openModal} />
         {this.state.status === 'pending' && <Loader />}
         {this.state.status === 'rejected' && <ErrorViewImg />}
         {this.state.status === 'resolved' && (
           <Button loadMore={this.loadMore} />
+        )}
+        {this.state.showModal && (
+          <Modal
+            largeImageURL={this.state.largeImageURL}
+            tags={this.state.tags}
+            onClose={this.toggleModal}
+          />
         )}
         <ToastContainer autoClose={3000} theme="colored" />
       </div>
