@@ -1,13 +1,14 @@
 import { Component } from 'react';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Searchbar from './Searchbar';
-import ImageGallery from './ImageGallery';
-import ErrorViewImg from './ErrorView/ErrorView';
-import ImageAPI from '../services/image-api';
-import Button from './Button';
-import { Loader } from './Loader/Loader';
-import Modal from './Modal'
+import Searchbar from '../Searchbar';
+import ImageGallery from '../ImageGallery';
+import ErrorViewImg from '../ErrorView/ErrorView';
+import ImageAPI from '../../services/image-api';
+import Button from '../Button';
+import { Loader } from '../Loader/Loader';
+import Modal from '../Modal';
+import { Enter, AppWrap } from './App.styled';
 
 export default class App extends Component {
   state = {
@@ -17,7 +18,6 @@ export default class App extends Component {
     status: 'idle',
     tags: null,
     page: 1,
-    loading: false,
     showModal: false,
   };
 
@@ -28,12 +28,8 @@ export default class App extends Component {
     const nextPage = this.state.page;
 
     if (prevName !== nextName || prevPage !== nextPage) {
-      // this.setState({ status: 'pending', loading: true, page: 1, images: [] });
       this.fetchImages(nextName, nextPage);
     }
-    // if (prevPage !== nextPage) {
-    //   this.fetchImages(nextName, nextPage);
-    // }
   }
 
   fetchImages(nextName, nextPage) {
@@ -58,7 +54,6 @@ export default class App extends Component {
       .catch(error => this.setState({ error, status: 'rejected' }));
   }
 
-//  тут поміняти треба
   handleSearchbarSubmit = name => {
     this.setState({ imageName: name, page: 1, images: [] });
   };
@@ -76,7 +71,6 @@ export default class App extends Component {
     const tags = e.target.alt;
 
     if (e.target.nodeName === 'IMG') {
-
       this.setState(({ showModal }) => ({
         showModal: !showModal,
         largeImageURL: largeImageURL,
@@ -87,12 +81,18 @@ export default class App extends Component {
 
   render() {
     return (
-      <div>
+      <AppWrap>
         <Searchbar onSubmit={this.handleSearchbarSubmit} />
-        {this.state.status === 'idle' && <p>Enter your search request</p>}
+        {this.state.status === 'idle' && (
+          <Enter>Enter your search request!</Enter>
+        )}
         <ImageGallery images={this.state.images} openModal={this.openModal} />
-        {this.state.status === 'pending' && <Loader />}
-        {this.state.status === 'rejected' && <ErrorViewImg />}
+        {this.state.status === 'pending' && (<Loader />)}
+        {this.state.status === 'rejected' && (
+          <ErrorViewImg
+            message={`No images for your request ${this.state.imageName}. Go cry...`}
+          />
+        )}
         {this.state.status === 'resolved' && (
           <Button loadMore={this.loadMore} />
         )}
@@ -104,8 +104,7 @@ export default class App extends Component {
           />
         )}
         <ToastContainer autoClose={3000} theme="colored" />
-      </div>
+      </AppWrap>
     );
   }
 }
- 
