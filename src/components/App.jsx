@@ -26,14 +26,14 @@ export default class App extends Component {
     const nextPage = this.state.page;
 
     if (prevName !== nextName) {
-      this.setState({ status: 'pending', page: 1, images: [] });
+      this.setState({ status: 'pending', loading: true, page: 1, images: [] });
       this.fetchImages(nextName, nextPage);
     }
     if (prevPage !== nextPage) {
       this.fetchImages(nextName, nextPage);
     }
   }
-
+  
   fetchImages(nextName, nextPage) {
     ImageAPI.fetchImages(nextName, nextPage)
       .then(data => {
@@ -49,7 +49,7 @@ export default class App extends Component {
             prevState,
             images: [...prevState.images, ...data.hits],
             status: 'resolved',
-            imageSearch: nextName,
+            imageName: nextName,
           };
         });
       })
@@ -63,16 +63,18 @@ export default class App extends Component {
   loadMore = () => {
     this.setState(state => ({ page: state.page + 1 }));
   };
-  
+
   render() {
     return (
       <div>
         <Searchbar onSubmit={this.handleSearchbarSubmit} />
         {this.state.status === 'idle' && <p>Enter your search request</p>}
         <ImageGallery images={this.state.images} />
-        {this.state.status === 'pending' && (<Loader />)}
+        {this.state.status === 'pending' && <Loader />}
         {this.state.status === 'rejected' && <ErrorViewImg />}
-        {this.state.status === 'resolved' && (<Button loadMore={this.loadMore} />)}
+        {this.state.status === 'resolved' && (
+          <Button loadMore={this.loadMore} />
+        )}
         <ToastContainer autoClose={3000} theme="colored" />
       </div>
     );
