@@ -41,14 +41,11 @@ export default class App extends Component {
             images: [],
           });
         }
-        this.setState(prevState => {
-          return {
-            prevState,
+        this.setState(prevState => ({
             images: [...prevState.images, ...data.hits],
             status: 'resolved',
             imageName: nextName,
-          };
-        });
+        }));
       })
       .catch(error => this.setState({ error, status: 'rejected' }));
   }
